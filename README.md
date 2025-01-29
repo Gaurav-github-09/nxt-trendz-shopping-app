@@ -5,8 +5,23 @@ In this project, i've built a **Nxt Trendz - Shopping** app.
 
 **Live link** - https://nxtshopvgk.ccbp.tech/login
 
+---------------------------------------------------------
 
 ### Refer to the video below:
+
+- **Video 1**
+
+
+https://github.com/user-attachments/assets/e3de3c61-a1c8-4dd1-a26b-df8e65dac418
+
+
+- **Video 2**
+
+
+
+
+https://github.com/user-attachments/assets/c2ffecff-cde9-4b08-af6e-6519497e44d8
+
 
 
 

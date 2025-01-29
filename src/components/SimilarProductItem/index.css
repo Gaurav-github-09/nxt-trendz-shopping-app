@@ -1,0 +1,66 @@
+/* Write your CSS here */
+
+.listEl {
+  padding: 10px;
+  list-style-type: none;
+  display: flex;
+  width: 30%;
+  margin: 10px;
+  flex-direction: column;
+}
+.simPrologo {
+  height: 350px;
+  width: 90%;
+  border-radius: 10px;
+  margin: 5px 0px 5px 0px;
+}
+
+.UNordered {
+  padding: 2px;
+  margin: 2px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.simTitle {
+  color: #1e293b;
+  font-weight: bold;
+  font-family: 'Roboto';
+  font-size: large;
+  padding: 2px;
+  margin: 20px 0px 10px 10px;
+}
+
+.checkBrand {
+  color: #475569;
+  margin: 0px;
+  font-weight: 500;
+  padding: 10px 0px 10px 12px;
+}
+
+.lastandfinalCOnt {
+  padding: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lasrat {
+  font-weight: bold;
+  color: #12022f;
+  font-size: 25px;
+}
+
+@media (max-width: 768px) {
+  .listEl {
+    width: 100%;
+  }
+  .lastandfinalCOnt {
+    width: 90%;
+  }
+  .UNordered {
+    flex-direction: column;
+  }
+}

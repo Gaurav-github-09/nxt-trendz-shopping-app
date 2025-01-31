@@ -169,6 +169,7 @@ class Cart extends Component {
       }
       return false
     })
+    const totalItems = updatedListOfIds.length
     let price = 0
     const totalPrice = updatedListOfIds.map(each => this.getPrice(each))
     totalPrice.forEach(num => {
@@ -213,25 +214,42 @@ class Cart extends Component {
             )}
             {error && <p>Error fetching product details: {error.message}</p>}
             {
-              <ul className="unorderedCart">
-                {updatedListOfIds.map(each => this.getStyles(each))}
-              </ul>
+              <>
+                <p className="totalItemspara">Total Items : {totalItems}</p>
+                <ul className="unorderedCart">
+                  {updatedListOfIds.map(each => this.getStyles(each))}
+                </ul>
+              </>
             }
           </div>
           <div className="cart2">
             <h1 className="AmtP">Amount To Pay</h1>
-            <p className="billAmnt">
-              Bill Amount: <span className="specSTYLEcar">Rs {price} /-</span>
-            </p>
-            <p className="billAmnt">
-              Gst amount (18%):
-              <span className="specSTYLEcar">Rs {gst} /-</span>
-            </p>
+            <div className="miniCont">
+              <p className="billAmnt">Bill Amount:</p>
+              <p className="specSTYLEcar">Rs {price} /-</p>
+            </div>
+            <div className="miniCont">
+              <p className="billAmnt">Gst amount (18%):</p>
+              <p className="specSTYLEcar">Rs {gst} /-</p>
+            </div>
+            {price > 1000 ? (
+              <div className="miniCont">
+                <p className="billAmnt">Total Amount:</p>
+                <p className="specSTYLEcar">Rs {price + gst} /-</p>
+              </div>
+            ) : (
+              <>
+                <div className="miniCont">
+                  <p className="billAmnt">Delivery charges:</p>
+                  <p className="specSTYLEcar">Rs 50 /-</p>
+                </div>
+                <div className="miniCont">
+                  <p className="billAmnt">Total Amount:</p>
+                  <p className="specSTYLEcar">Rs {price + gst + 50} /-</p>
+                </div>
+              </>
+            )}
 
-            <p className="billAmnt">
-              Total Amount:
-              <span className="specSTYLEcar">Rs {price + gst + 50} /-</span>
-            </p>
             <button className="ContinueShop finalAndLatbtn" type="button">
               Proceed to Pay
             </button>

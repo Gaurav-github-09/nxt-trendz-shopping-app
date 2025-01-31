@@ -10,7 +10,11 @@ const Home = () => {
   if (jwtToken === undefined) {
     return <Redirect to="/login" />
   }
-  localStorage.setItem('cartIds', [])
+  const check = localStorage.getItem('cartIds')
+  if (check.length === 0) {
+    localStorage.setItem('cartIds', [])
+  }
+
   return (
     <>
       <Header />
@@ -30,7 +34,7 @@ const Home = () => {
             fashion in your own way.
           </p>
           <Link to="/products">
-            <button type="button" className="shop-now-button">
+            <button type="button" className="ContinueShop shop-now-button">
               Shop Now
             </button>
           </Link>

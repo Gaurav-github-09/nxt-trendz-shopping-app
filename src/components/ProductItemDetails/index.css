@@ -65,7 +65,7 @@
 }
 
 .PRdoImgMain {
-  min-height: 550px;
+  height: 550px;
   border-radius: 15px;
   width: 40%;
   margin-right: 30px;
@@ -223,5 +223,12 @@
   }
   .title {
     padding-left: 10px;
+  }
+}
+
+@media (max-width: 450px) {
+  .PRdoImgMain {
+    width: 100%;
+    height: 100%;
   }
 }

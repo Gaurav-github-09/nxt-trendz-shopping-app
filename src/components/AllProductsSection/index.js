@@ -1,69 +1,14 @@
+// Write your code here
 import {Component} from 'react'
-import Loader from 'react-loader-spinner'
+import {withRouter} from 'react-router-dom'
+import {BsPlusSquare, BsDashSquare} from 'react-icons/bs'
 import Cookies from 'js-cookie'
+import Loader from 'react-loader-spinner'
+import Header from '../Header'
 
-import FiltersGroup from '../FiltersGroup'
-import ProductCard from '../ProductCard'
-import ProductsHeader from '../ProductsHeader'
+import SimilarProductItem from '../SimilarProductItem'
 
 import './index.css'
-
-const categoryOptions = [
-  {
-    name: 'Clothing',
-    categoryId: '1',
-  },
-  {
-    name: 'Electronics',
-    categoryId: '2',
-  },
-  {
-    name: 'Appliances',
-    categoryId: '3',
-  },
-  {
-    name: 'Grocery',
-    categoryId: '4',
-  },
-  {
-    name: 'Toys',
-    categoryId: '5',
-  },
-]
-
-const sortbyOptions = [
-  {
-    optionId: 'PRICE_HIGH',
-    displayText: 'Price (High-Low)',
-  },
-  {
-    optionId: 'PRICE_LOW',
-    displayText: 'Price (Low-High)',
-  },
-]
-
-const ratingsList = [
-  {
-    ratingId: '4',
-    imageUrl:
-      'https://assets.ccbp.in/frontend/react-js/rating-four-stars-img.png',
-  },
-  {
-    ratingId: '3',
-    imageUrl:
-      'https://assets.ccbp.in/frontend/react-js/rating-three-stars-img.png',
-  },
-  {
-    ratingId: '2',
-    imageUrl:
-      'https://assets.ccbp.in/frontend/react-js/rating-two-stars-img.png',
-  },
-  {
-    ratingId: '1',
-    imageUrl:
-      'https://assets.ccbp.in/frontend/react-js/rating-one-star-img.png',
-  },
-]
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -72,28 +17,35 @@ const apiStatusConstants = {
   inProgress: 'IN_PROGRESS',
 }
 
-class AllProductsSection extends Component {
+class ProductItemDetails extends Component {
   state = {
-    productsList: [],
     apiStatus: apiStatusConstants.initial,
-    activeOptionId: sortbyOptions[0].optionId,
-    activeCategoryId: '',
-    searchInput: '',
-    activeRatingId: '',
+    productDetails: [],
+    similarItems: [],
+    initialValue: 1,
+    idUpdate: '',
   }
 
   componentDidMount() {
-    this.getProducts()
+    this.getProductItemDetails()
   }
 
-  getProducts = async () => {
-    this.setState({
-      apiStatus: apiStatusConstants.inProgress,
-    })
+  getProductItemDetails = async () => {
+    this.setState({apiStatus: apiStatusConstants.inProgress})
+    window.scrollTo(0, 0)
+
+    const {history} = this.props
+
+    const {idUpdate} = this.state
+
     const jwtToken = Cookies.get('jwt_token')
-    const {activeOptionId, activeCategoryId} = this.state
-    const {searchInput, activeRatingId} = this.state
-    const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}&category=${activeCategoryId}&title_search=${searchInput}&rating=${activeRatingId}`
+
+    let apiUrl = `https://apis.ccbp.in${history.location.pathname}`
+
+    if (idUpdate !== '') {
+      apiUrl = `https://apis.ccbp.in/products/${idUpdate}`
+    }
+
     const options = {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
@@ -101,148 +53,221 @@ class AllProductsSection extends Component {
       method: 'GET',
     }
     const response = await fetch(apiUrl, options)
-    if (response.ok) {
+    if (response.ok === true) {
       const fetchedData = await response.json()
-      const updatedData = fetchedData.products.map(product => ({
-        title: product.title,
-        brand: product.brand,
-        price: product.price,
-        id: product.id,
-        imageUrl: product.image_url,
-        rating: product.rating,
+
+      const updatedProdDetails = {
+        availability: fetchedData.availability,
+        brand: fetchedData.brand,
+        description: fetchedData.description,
+        id: fetchedData.id,
+        imageUrl: fetchedData.image_url,
+        price: fetchedData.price,
+        rating: fetchedData.rating,
+        style: fetchedData.style,
+        title: fetchedData.title,
+        totalReviews: fetchedData.total_reviews,
+      }
+
+      const updatedSimilarItems = fetchedData.similar_products.map(each => ({
+        availability: each.availability,
+        brand: each.brand,
+        description: each.description,
+        id: each.id,
+        imageUrl: each.image_url,
+        price: each.price,
+        rating: each.rating,
+        style: each.style,
+        title: each.title,
+        totalReviews: each.total_reviews,
       }))
+
       this.setState({
-        productsList: updatedData,
         apiStatus: apiStatusConstants.success,
+        similarItems: updatedSimilarItems,
+        productDetails: updatedProdDetails,
       })
     } else {
-      this.setState({
-        apiStatus: apiStatusConstants.failure,
-      })
+      this.setState({apiStatus: apiStatusConstants.failure})
     }
   }
 
-  changeSortby = activeOptionId => {
-    this.setState({activeOptionId}, this.getProducts)
+  gotID = id => {
+    this.setState({idUpdate: id}, this.getProductItemDetails)
   }
 
-  clearFilters = () => {
-    this.setState(
-      {
-        searchInput: '',
-        activeCategoryId: '',
-        activeRatingId: '',
-      },
-      this.getProducts,
+  plusClicked = () => {
+    this.setState(prev => ({initialValue: prev.initialValue + 1}))
+  }
+
+  minusClicked = () => {
+    const {initialValue} = this.state
+
+    if (initialValue > 1) {
+      this.setState(prev => ({initialValue: prev.initialValue - 1}))
+    } else {
+      this.setState({initialValue: 1})
+    }
+  }
+
+  addToCartClicked = () => {
+    const {history} = this.props
+
+    const idAdd = history.location.pathname.slice(
+      10,
+      history.location.pathname.length,
     )
+    const idsForCart = localStorage.getItem('cartIds')
+
+    const uniq = [...new Set(idsForCart.split(',')), idAdd]
+
+    // console.log([...parsedIdssList, idAdd])
+
+    // const uniq = [...new Set(resultCheck)]
+
+    // console.log(resultCheck)
+
+    localStorage.setItem('cartIds', uniq)
+
+    // localStorage.removeItem('cartIds')
   }
 
-  changeRating = activeRatingId => {
-    this.setState({activeRatingId}, this.getProducts)
-  }
+  ProductItemDetails = () => {
+    const {productDetails, similarItems, initialValue} = this.state
 
-  changeCategory = activeCategoryId => {
-    this.setState({activeCategoryId}, this.getProducts)
-  }
+    const {
+      imageUrl,
+      title,
+      price,
+      rating,
+      totalReviews,
+      description,
+      availability,
+      brand,
+    } = productDetails
 
-  enterSearchInput = () => {
-    this.getProducts()
-  }
-
-  changeSearchInput = searchInput => {
-    this.setState({searchInput})
-  }
-
-  renderFailureView = () => (
-    <div className="products-error-view-container">
-      <img
-        src="https://assets.ccbp.in/frontend/react-js/nxt-trendz/nxt-trendz-products-error-view.png"
-        alt="products failure"
-        className="products-failure-img"
-      />
-      <h1 className="product-failure-heading-text">
-        Oops! Something Went Wrong
-      </h1>
-      <p className="products-failure-description">
-        We are having some trouble processing your request. Please try again.
-      </p>
-    </div>
-  )
-
-  renderProductsListView = () => {
-    const {productsList, activeOptionId} = this.state
-    const shouldShowProductsList = productsList.length > 0
-
-    return shouldShowProductsList ? (
-      <div className="all-products-container">
-        <ProductsHeader
-          activeOptionId={activeOptionId}
-          sortbyOptions={sortbyOptions}
-          changeSortby={this.changeSortby}
-        />
-        <ul className="products-list">
-          {productsList.map(product => (
-            <ProductCard productData={product} key={product.id} />
+    return (
+      <div className="PRodCont">
+        <div className="cont1">
+          <img className="PRdoImgMain" src={imageUrl} alt="product" />
+          <div className="Bordercont">
+            <h1 className="title">{title}</h1>
+            <p className="price">Rs {price}/-</p>
+            <div className="buttonCont">
+              <button className="starBtn" type="button">
+                <p>{rating}</p>
+                <img
+                  className="starImg"
+                  src="https://assets.ccbp.in/frontend/react-js/star-img.png"
+                  alt="star"
+                />
+              </button>
+              <p className="totalReviews">{totalReviews} Reviews</p>
+            </div>
+            <p className="description">{description}</p>
+            <div className="avaiCont">
+              <h1 className="avaHead">Available:</h1>
+              <p className="description desc2">{availability}</p>
+            </div>
+            <div className="avaiCont">
+              <h1 className="avaHead">Brand:</h1>
+              <p className="description desc2">{brand}</p>
+            </div>
+            <div className="btnContLast">
+              <button
+                onClick={this.minusClicked}
+                className="plusDashbtn"
+                data-testid="minus"
+                type="button"
+              >
+                <BsDashSquare className="dashPlus" />
+              </button>
+              <p className="initial">{initialValue}</p>
+              <button
+                onClick={this.plusClicked}
+                className="plusDashbtn"
+                data-testid="plus"
+                type="button"
+              >
+                <BsPlusSquare className="dashPlus" />
+              </button>
+            </div>
+            <button
+              onClick={this.addToCartClicked}
+              className="AddtoCart ContinueShop"
+              type="button"
+            >
+              ADD TO CART
+            </button>
+          </div>
+        </div>
+        <h1 className="SimilarProd">Similar Products</h1>
+        <ul className="UNordered">
+          {similarItems.map(each => (
+            <SimilarProductItem
+              updateId={this.gotID}
+              key={each.id}
+              similarItemsDetails={each}
+            />
           ))}
         </ul>
       </div>
-    ) : (
-      <div className="no-products-view">
-        <img
-          src="https://assets.ccbp.in/frontend/react-js/nxt-trendz/nxt-trendz-no-products-view.png"
-          className="no-products-img"
-          alt="no products"
-        />
-        <h1 className="no-products-heading">No Products Found</h1>
-        <p className="no-products-description">
-          We could not find any products. Try other filters.
-        </p>
-      </div>
     )
   }
 
-  renderLoadingView = () => (
-    <div className="products-loader-container">
-      <Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />
+  loader = () => (
+    <div className="loaderCont" data-testid="loader">
+      <Loader type="ThreeDots" color="#0b69ff" height={80} width={80} />
     </div>
   )
 
-  renderAllProducts = () => {
+  redirectToShopping = () => {
+    const {history} = this.props
+
+    history.replace('/products')
+  }
+
+  noProduct = () => (
+    <div className="mainContPID">
+      <img
+        className="errorimg"
+        src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-error-view-img.png"
+        alt="failure view"
+      />
+      <h1>Product Not Found</h1>
+      <button
+        className="ContinueShop"
+        onClick={this.redirectToShopping}
+        type="button"
+      >
+        Continue Shopping
+      </button>
+    </div>
+  )
+
+  apiResults = () => {
     const {apiStatus} = this.state
 
     switch (apiStatus) {
-      case apiStatusConstants.success:
-        return this.renderProductsListView()
-      case apiStatusConstants.failure:
-        return this.renderFailureView()
       case apiStatusConstants.inProgress:
-        return this.renderLoadingView()
+        return this.loader()
+      case apiStatusConstants.failure:
+        return this.noProduct()
+      case apiStatusConstants.success:
+        return this.ProductItemDetails()
       default:
         return null
     }
   }
 
   render() {
-    const {activeCategoryId, searchInput, activeRatingId} = this.state
-
     return (
-      <div className="all-products-section">
-        <FiltersGroup
-          searchInput={searchInput}
-          categoryOptions={categoryOptions}
-          ratingsList={ratingsList}
-          changeSearchInput={this.changeSearchInput}
-          enterSearchInput={this.enterSearchInput}
-          activeCategoryId={activeCategoryId}
-          activeRatingId={activeRatingId}
-          changeCategory={this.changeCategory}
-          changeRating={this.changeRating}
-          clearFilters={this.clearFilters}
-        />
-        {this.renderAllProducts()}
-      </div>
+      <>
+        <Header />
+        <div className="mainContPID">{this.apiResults()}</div>
+      </>
     )
   }
 }
 
-export default AllProductsSection
+export default withRouter(ProductItemDetails)

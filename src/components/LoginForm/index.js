@@ -59,8 +59,9 @@ class LoginForm extends Component {
         <label className="input-label" htmlFor="password">
           PASSWORD
         </label>
-        <span className="leak"> rahul@2021</span>
+
         <input
+          placeholder="rahul@2021"
           type="password"
           id="password"
           className="password-input-field"
@@ -78,9 +79,10 @@ class LoginForm extends Component {
         <label className="input-label" htmlFor="username">
           USERNAME
         </label>
-        <span className="leak">rahul</span>
+
         <input
           type="text"
+          placeholder="rahul"
           id="username"
           className="username-input-field"
           value={username}

@@ -9,6 +9,11 @@
   width: 90%;
   max-width: 1110px;
 }
+.ContinueShop:hover {
+  border: black solid 3px;
+  background-color: rgb(44, 143, 219);
+  font-size: larger;
+}
 
 @media screen and (min-width: 768px) {
   .home-container {

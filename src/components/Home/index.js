@@ -11,7 +11,7 @@ const Home = () => {
     return <Redirect to="/login" />
   }
   const check = localStorage.getItem('cartIds')
-  if (check.length === 0) {
+  if (check === null || check === '' || check.length === 0) {
     localStorage.setItem('cartIds', [])
   }
 

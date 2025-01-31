@@ -1,3 +1,21 @@
+.totalItemspara {
+  display: flex;
+  align-self: flex-start;
+  text-align: start;
+  margin: 15px 35px;
+  text-decoration: #9fb0c1 underline solid 2px;
+  font-weight: bolder;
+  font-size: smaller;
+  font-family: sans-serif;
+  color: #475569;
+}
+
+.miniCont {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+}
+
 .cart-container {
   display: flex;
   flex-direction: row;
@@ -196,14 +214,14 @@
 .billAmnt {
   color: #475569;
   margin: 20px;
-  font-size: larger;
+  font-size: small;
   font-weight: 600;
 }
 
 .specSTYLEcar {
   color: #07275a;
   font-weight: bolder;
-  font-size: large;
+  font-size: small;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   margin-left: 10px;
 }
@@ -218,6 +236,19 @@
 }
 
 @media (max-width: 768px) {
+  .itemsIn {
+    font-size: larger;
+  }
+
+  .AmtP {
+    padding-top: 15px;
+    font-size: larger;
+  }
+
+  .cartIconstyle {
+    height: 39px;
+    width: 35px;
+  }
   .cart-container {
     flex-direction: column;
   }
@@ -232,4 +263,16 @@
     flex-grow: 4;
     padding: 10px;
   }
+  .billAmnt {
+    font-size: smaller;
+  }
+  .specSTYLEcar {
+    font-size: smaller;
+  }
+}
+
+.ContinueShop:hover {
+  border: black solid 3px;
+  background-color: rgb(44, 143, 219);
+  font-size: large;
 }

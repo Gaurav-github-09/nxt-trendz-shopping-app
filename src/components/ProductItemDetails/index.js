@@ -194,7 +194,7 @@ class ProductItemDetails extends Component {
             </div>
             <button
               onClick={this.addToCartClicked}
-              className="AddtoCart"
+              className="AddtoCart ContinueShop"
               type="button"
             >
               ADD TO CART
